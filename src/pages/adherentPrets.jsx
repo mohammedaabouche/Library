@@ -2,29 +2,18 @@ import React, { useState, useEffect } from "react";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
 import { useLocation } from "react-router-dom";
-
+import axios from "axios";
 function AdherentPrets() {
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [activeRoute, setActiveRoute] = useState("");
   const [prets, setPrets] = useState([]);
   const [pret, setPret] = useState({});
-  const attribus = [
+  const attribus = ["agent", "livre", "datepret", "dateretour", "status"];
 
-    "agent",
-    "livre",
-    "datepret",
-    "dateretour",
-    "status",
-  ];
-
-  const menuItems = [
-    { path: "/mesprets", label: "Mes prets" },
-  
-  ];
+  const menuItems = [{ path: "/mesprets", label: "Mes prets" }];
 
   const getMyPrets = async (username) => {
-
     try {
       const response = await axios.get("http://localhost:5000/prets", {
         params: {
@@ -35,13 +24,12 @@ function AdherentPrets() {
     } catch (error) {
       console.error("Error:", error.message);
     }
+  };
 
-   
-  }
-
-  
-  
-
+  const MyFunction = (e) => {
+    e.preventDefault(); 
+    setSearch(e.target.value);
+};
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     setUser(storedUser);
@@ -73,18 +61,21 @@ function AdherentPrets() {
       },
     ]);
   }, [location]);
-  const pretMapping = prets.map((pret) => {
-    return (
-      <tr>
-       
-        <td>{pret.agent}</td>
-        <td>{pret.livre}</td>
-        <td>{pret.datepret}</td>
-        <td>{pret.dateretour}</td>
-        <td>{pret.status}</td>
-      </tr>
-    );
-  });
+  const pretMapping = prets
+    .filter((book) => {
+      return book.adherent === localStorage.getItem("user");
+    })
+    .map((pret) => {
+      return (
+        <tr>
+          <td>{pret.agent}</td>
+          <td>{pret.livre}</td>
+          <td>{pret.datepret}</td>
+          <td>{pret.dateretour}</td>
+          <td>{pret.status}</td>
+        </tr>
+      );
+    });
   const handleRoutes = () => {
     const currentPath = location.pathname;
     const matchingItem = menuItems.find((item) => currentPath === item.path);
@@ -92,12 +83,12 @@ function AdherentPrets() {
   };
   const handleInputChange = (e) => {
     if (e.target.name === "agent") {
-        e.target.value = localStorage.getItem("user");
-        setPret((prevPret) => ({
-            ...prevPret,
-            [e.target.name]: localStorage.getItem("user"),
-        }));
-        return;
+      e.target.value = localStorage.getItem("user");
+      setPret((prevPret) => ({
+        ...prevPret,
+        [e.target.name]: localStorage.getItem("user"),
+      }));
+      return;
     }
     const { name, value } = e.target;
     setPret((prevPret) => ({
@@ -148,23 +139,27 @@ function AdherentPrets() {
           <SideBar />
         </div>
         <main className="mainb col-span-10">
-          
           <div>
-        
-          
-              <div className="table">
-                <table>
-                  <thead>
-                    <tr>
-                      {attribus.map((attribu) => (
-                        <th>{attribu}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>{pretMapping}</tbody>
-                </table>
-              </div>
-   
+            <div className="table">
+            
+              <input
+                type="text"
+                placeholder="search ..."
+                onChange={(e) => {
+                  MyFunction(e);
+                }}
+              />
+              <table>
+                <thead>
+                  <tr>
+                    {attribus.map((attribu) => (
+                      <th>{attribu}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>{pretMapping}</tbody>
+              </table>
+            </div>
           </div>
         </main>
       </div>

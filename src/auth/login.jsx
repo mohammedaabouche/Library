@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./auth.css";
 import video from "../assets/video/1472560_Education_People_1920x1080.mp4";
+import axios from "axios";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,11 +13,14 @@ function Login() {
     try {
       const response = await axios.get('http://localhost:5000/users/search', {
         params: {
-          username: username,
+          username: email,
           password: password
         }
       });
-      // Handle successful response here
+      
+      localStorage.setItem('token',password)
+      localStorage.setItem('user',email)
+      localStorage.setItem('role',response.data.role)
       console.log('Response:', response.data);
     } catch (error) {
       if (error.response.status === 404) {

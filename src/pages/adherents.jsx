@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
 import { useLocation } from "react-router-dom";
-
+import axios from "axios";
 function Adherents() {
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -25,7 +25,10 @@ function Adherents() {
       console.error("Error:", error.message);
     }
   };
-
+  const MyFunction = (e) => {
+    e.preventDefault(); 
+    setSearch(e.target.value);
+};
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -49,7 +52,20 @@ function Adherents() {
     ]);
 
   }, [location]);
-  const adherentMapping=adherents.map((adherent) => {
+  const adherentMapping=adherents.filter( 
+    (adherent)=>{
+      if(search=="")
+      return adherent
+      else if(String(adherent.prenom).toLowerCase().includes(search.toLowerCase()) ||
+      String(adherent.nom).toLowerCase().includes(search.toLowerCase()) ||
+      String(adherent.email).toLowerCase().includes(search.toLowerCase()) ||
+      String(adherent.telephone).toLowerCase().includes(search.toLowerCase()) ||
+      String(adherent.adresse).toLowerCase().includes(search.toLowerCase())){
+        return adherent
+      }
+
+    }
+  ).map((adherent) => {
     return (
       <tr>
         <td>{adherent.prenom}</td>
@@ -149,6 +165,14 @@ function Adherents() {
             {activeRoute === "/adherent/all" && (
 
               <div className="table">
+               
+              <input
+                type="text"
+                placeholder="search ..."
+                onChange={(e) => {
+                  MyFunction(e);
+                }}
+              />
                 <table >
                   <thead>
                     <tr>

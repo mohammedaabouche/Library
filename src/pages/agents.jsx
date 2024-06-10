@@ -3,7 +3,7 @@ import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
 import { useLocation } from "react-router-dom";
 import'./pages.css';
-
+import axios from "axios";
 function Agents() {
   const location = useLocation();
   const [user, setUser] = useState(null);

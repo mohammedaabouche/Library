@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import video from "../assets/video/1472527_Culture_Building_1920x1080.mp4";
 import SideBar from "../components/sidebar";
 import { useLocation } from "react-router-dom";
-
+import axios from "axios";
 function Prets() {
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [activeRoute, setActiveRoute] = useState("");
   const [prets, setPrets] = useState([]);
   const [pret, setPret] = useState({});
+  const [search, setSearch] = useState("");
   const attribus = [
     "adherent",
     "agent",
@@ -43,6 +44,10 @@ function Prets() {
       console.error("Error:", error.message);
     }
   };
+  const MyFunction = (e) => {
+    e.preventDefault(); 
+    setSearch(e.target.value);
+  }
 
 
   useEffect(() => {
@@ -76,7 +81,21 @@ function Prets() {
       },
     ]);
   }, [location]);
-  const pretMapping = prets.map((pret) => {
+  const pretMapping = prets.filter(
+    (pret) => {
+      if (search == "") return pret;
+      else if (
+        String(pret.adherent).toLowerCase().includes(search.toLowerCase()) ||
+        String(pret.agent).toLowerCase().includes(search.toLowerCase()) ||
+        String(pret.livre).toLowerCase().includes(search.toLowerCase()) ||
+        String(pret.datepret).toLowerCase().includes(search.toLowerCase()) ||
+        String(pret.dateretour).toLowerCase().includes(search.toLowerCase()) ||
+        String(pret.status).toLowerCase().includes(search.toLowerCase())
+      ) {
+        return pret;
+      }
+    }
+  ).map((pret) => {
     return (
       <tr>
         <td>{pret.adherent}</td>
@@ -84,7 +103,15 @@ function Prets() {
         <td>{pret.livre}</td>
         <td>{pret.datepret}</td>
         <td>{pret.dateretour}</td>
-        <td>{pret.status}</td>
+        <td onClick={()=>{
+          if(pret.status==="OK"){
+            pret.status="Non Rendu"
+          }
+          else{
+            pret.status="OK"
+          }
+        
+        }} >{pret.status}</td>
       </tr>
     );
   });
@@ -192,6 +219,13 @@ function Prets() {
             )}
             {activeRoute === "/pret/all" && (
               <div className="table">
+                <input
+                  type="text"
+                  placeholder="search ..."
+                  onChange={(e) => {
+                    MyFunction(e);
+                  }}
+                  />
                 <table>
                   <thead>
                     <tr>
