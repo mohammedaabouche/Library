@@ -13,7 +13,7 @@ function HomeUser() {
   return (
     <div className="">
       <nav className=" nav grid grid-cols-10 gap-3">
-        <h1 className="col-span-8 logo">mohnidisin hhhh</h1>
+        <h1 className="col-span-8 logo">EmiBook</h1>
 
         <ul className=" col-span-2 grid grid-cols-4 gap-10">
           <li>

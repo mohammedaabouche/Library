@@ -6,36 +6,35 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  function handleSubmit(event) {
+  async function handleSubmit(event){
     event.preventDefault();
     setError("");
-    if (email === "admin" && password === "password") {
-      localStorage.setItem("token", "123456");
-      localStorage.setItem("user", email);
-      localStorage.setItem("role", "admin");
-      window.location.href = `/${localStorage.getItem("user")}`;
-    } 
-    else if (email === "adherentt" && password === "password") {
-      localStorage.setItem("token", "123456");
-      localStorage.setItem("user", email);
-      localStorage.setItem("role", "adherent");
-      window.location.href = `/${localStorage.getItem("user")}`;}
-    else if (email === "agentt" && password === "password") {
-      localStorage.setItem("token", "123456");
-      localStorage.setItem("user", email);
-      localStorage.setItem("role", "agent");
-      window.location.href = `/${localStorage.getItem("user")}`;
+    try {
+      const response = await axios.get('http://localhost:5000/users/search', {
+        params: {
+          username: username,
+          password: password
+        }
+      });
+      // Handle successful response here
+      console.log('Response:', response.data);
+    } catch (error) {
+      if (error.response.status === 404) {
+        setError('username or password is incorrect');
+        console.error('User not found');
+      } else {
+        // Handle other errors
+        console.error('Error:', error.message);
+      }
     }
-    else {
-      setError("Invalid email or password");
-    }
+    
   }
   return (
     
     <div className="">
         
       <nav className=" nav grid grid-cols-10 gap-3">
-        <h1 className="col-span-8 logo">mohnidisin hhhh</h1>
+        <h1 className="col-span-8 logo">EmiBook</h1>
 
         <ul className=" col-span-2 grid grid-cols-4 gap-10">
           <li>

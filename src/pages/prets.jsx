@@ -22,6 +22,28 @@ function Prets() {
     { path: "/pret", label: "Add pret" },
     { path: "/pret/all", label: "All pret" },
   ];
+  
+  const getPrets = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/prets");
+      setPrets(response.data);
+    }
+    catch (error) {
+      console.error("Error:", error.message);
+    }
+  };
+
+  const postPret = async () => {
+    
+    try {
+      const response = await axios.post("http://localhost:5000/prets", pret);
+      console.log(response.data);
+    }
+    catch (error) {
+      console.error("Error:", error.message);
+    }
+  };
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -95,7 +117,7 @@ function Prets() {
   return (
     <div>
       <nav className="nav grid grid-cols-10 gap-3">
-        <h1 className="col-span-8 logo">Mohnidisin Hhhh</h1>
+        <h1 className="col-span-8 logo">EmiBook</h1>
         <ul className="col-span-2 grid grid-cols-4 gap-10">
           <li>
             <a href="/about">About</a>
